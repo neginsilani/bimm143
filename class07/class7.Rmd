@@ -101,7 +101,7 @@ length(y2)
 
 
 ```{r}
-both_na2(x, y2)
+#both_na2(x, y2)
 ```
 
 ```{r}
@@ -199,10 +199,10 @@ min(x1, na.rm=FALSE)
 ```
 
 ```{r}
-code (x1) grade<- function(x1) {
-  min(x1, na.rm=FALSE)
-  (sum(x1)- min(x1))/7
-}
+#code (x1) grade<- function(x1) {
+ # min(x1, na.rm=FALSE)
+  #(sum(x1)- min(x1))/7
+#}
 ```
 
 ```{r}
@@ -214,8 +214,8 @@ min(x2, na.rm= FALSE)
 ```
 
 ```{r}
-code (x2) grade <- function(x2) {
-  (sum(x2) - min(x2))/7
-}
+#code (x2) grade <- function(x2) {
+  #(sum(x2) - min(x2))/7
+#}
 ```
 
