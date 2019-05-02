@@ -1,0 +1,262 @@
+---
+title: "class9"
+author: "Negin Silani"
+date: "4/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analysis of Human Breast Cancer
+```{r}
+wisc.df<-read.csv("class9.csv")
+```
+
+# Convert the features of the data: wisc.data
+```{r}
+wisc.data <- as.matrix( wisc.df[,3:32] )
+rownames(wisc.data)<- wisc.df$id
+head(wisc.data)
+
+```
+
+store diagnosis data as a vector of 1 and 0 values with 1 being
+```{r}
+diagnosis<- as.numeric(wisc.df$diagnosis =="M")
+```
+
+>Q.2 how many diagnosis?
+
+```{r}
+table(wisc.df$diagnosis)
+```
+
+```{r}
+colnames(wisc.data)
+```
+> Q1. How many ro names?
+
+```{r}
+nrow(wisc.data)
+```
+
+```{r}
+dim(wisc.data)
+```
+
+```{r}
+length(wisc.data)
+```
+
+Q.3 How many variables/features in the data are suffixed with _mean?
+```{r}
+length( grep("_mean", colnames(wisc.data)) )
+
+#Colnames(wisc.data)
+```
+
+
+Performing PCA
+It is important to check if the data need to be scaled before performing PCA. Recall two common reasons for scaling data include:
+
+- The input variables use different units of measurement.
+- The input variables have significantly different variances.
+
+Check the mean and standard deviation of the features (i.e. columns) of the wisc.data to determine if the data should be scaled. Use the colMeans() and apply() functions like you’ve done before.
+
+# Check column means and standard deviations
+
+```{r}
+round( colMeans(wisc.data), 1)
+
+```
+
+
+```{r}
+round( apply(wisc.data,2,sd) )
+```
+
+# Perform PCA on wisc.data by completing the following code
+
+```{r}
+wisc.pr <- prcomp( wisc.data, scale=TRUE)
+summary(wisc.pr)
+```
+
+```{r}
+diagnosis <-as.numeric(wisc.df$diagnosis== "M")
+```
+>Q4. From your results, what proportion of the original variance is captured by the first principal components (PC1)?
+
+ 44.2%
+```{r}
+summary(wisc.pr)
+```
+
+
+>Q5. How many principal components (PCs) are required to describe at least 70% of the original variance in the data?
+
+3 components, 72.3%
+
+>Q6. How many principal components (PCs) are required to describe at least 90% of the original variance in the data?
+
+PC7 (7 PCs)
+
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], col=diagnosis+1, xlab="PC1", ylab="PC2")
+```
+
+> Q7. What stands out to you about this plot? Is it easy or difficult to understand? Why?
+
+```{r}
+biplot(wisc.pr)
+```
+
+>Q8. Generate a similar plot for principal components 1 and 3. What do you notice about these plots?
+
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,3], col=diagnosis+1, xlab="PC1", ylab="PC3")
+```
+
+Overall, the plots indicate that principal component 1 is capturing a separation of malignant from benign samples. This is an important and interesting result worthy of further exploration - as we will do in the next sections!
+
+# Calculate variance of each component
+
+```{r}
+pr.var <-wisc.pr$sdev^2 
+head(pr.var)
+```
+
+Calculate the variance explained by each principal component by dividing by the total variance explained of all principal components. Assign this to a variable called pve and create a plot of variance explained for each principal component.
+
+
+# Variance explained by each principal component: pve
+
+```{r}
+pve <- (pr.var / sum(pr.var))*100
+head(pve)
+```
+
+# Plot variance explained for each principal component
+
+```{r}
+plot(pve, xlab = "Principal Component", 
+     ylab = "Proportion of Variance Explained", 
+     ylim = c(0, 100), type = "o")
+```
+
+# Alternative scree plot of the same data, note data driven y-axis
+
+```{r}
+barplot(pve, ylab = "Precent of Variance Explained",
+     names.arg=paste0("PC",1:length(pve)), las=2, axes = FALSE)
+axis(2, at=pve, labels=round(pve,2)*100 )
+```
+
+# Plot cumulative proportion of variance explained
+
+```{r}
+plot(cumsum(pve), xlab = "Principal Component", 
+     ylab = "Cumulative Proportion of Variance Explained", 
+     ylim = c(0, 100), type = "o")
+```
+
+# Scale the wisc.data data: data.scaled
+
+```{r}
+data.dist <- dist(wisc.data)
+```
+
+```{r}
+wisc.hclust<- hclust(data.dist, method= "complete")
+```
+
+```{r}
+plot(wisc.hclust)
+abline(h=19, col="red", lty=2)
+```
+
+
+
+
+```{r}
+wisc.hclust.clusters<- cutree(wisc.hclust, k=4)
+table(wisc.hclust.clusters, diagnosis)
+```
+
+```{r}
+table(wisc.hclust.clusters, diagnosis)
+```
+
+```{r}
+grps <- cutree(wisc.hclust, k=2)
+table(grps)
+```
+
+>Q12. Can you find a better cluster vs diagnoses match with by cutting into a different number of clusters between 2 and 10?
+
+```{r}
+grps <- cutree(wisc.hclust, k=10)
+table (grps, diagnosis)
+```
+
+##Clustering on PCA results
+
+Using the minimum number of principal components required to describe at least 90% of the variability in the data, create a hierarchical clustering model with the linkage method="ward.D2". We use Ward’s criterion here because it is based on multidimensional variance like principal components analysis. Assign the results to wisc.pr.hclust.
+
+```{r}
+wisc.pca.hclust<- hclust( dist(wisc.pr$x[,1:7]), method=
+                           "ward.D2")
+plot(wisc.pca.hclust)
+```
+
+
+```{r}
+grps<- cutree(wisc.pca.hclust, k=2)
+table(grps)
+```
+
+```{r}
+table(grps, diagnosis)
+```
+
+
+```{r}
+plot(wisc.pr$x[,1], wisc.pr$x[,2], col=grps)
+```
+
+
+```{r}
+plot(wisc.pr$x[,1:2], col=diagnosis+1)
+```
+
+```{r}
+library(rgl)
+plot3d(wisc.pr$x[,1:3], xlab="PC 1", ylab="PC 2", zlab="PC 3", cex=1.5, size=1, type="s", col=diagnosis+1, rgl.useNULL = TRUE)
+rglwidget(width = 400, height = 400)
+```
+
+## Prediction
+
+We will use the predict() function that will take our PCA model from before and new cancer cell data and project that data onto our PCA space.
+
+```{r}
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+npc
+```
+
+#plot these new patients 
+
+```{r}
+plot(wisc.pr$x[,1:2], col=grps)
+points(npc[,1], npc[,2], col="blue", pch=16)
+```
+
+>Q17. Which of these new patients should we prioritize for follow up based on your results?
+
+the first blue patient
+
