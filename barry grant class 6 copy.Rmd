@@ -1,0 +1,17 @@
+---
+title: 'Class 6: R functions'
+author: "Negin Silani"
+date: "4/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### About
+This is my **class 6** r markdown document with my *code* and notes for the day.
+```{r}
+plot(1:10, type ="l", col= "blue")
+```
+
