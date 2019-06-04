@@ -2,7 +2,7 @@
 title: 'class8: Machine learning'
 author: "Negin Silani"
 date: "4/25/2019"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -210,89 +210,8 @@ plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
 ##perfrom PCA of UK food data
 
 ```{r}
-list.files()
-```
-
-```{r}
-x <- read.csv("UK_foods.csv", row.names= 1)
+x <- read.csv("", row.names= 1)
 head(x)
 ```
-
-```{r}
-dim(x)
-```
-
-```{r}
-nrow(x)
-```
-
-```{r}
-ncol(x)
-```
-
-```{r}
-# Note how the minus indexing works
-rownames(x) <- x[,1]
-x <- x[,-1]
-head(x)
-```
-
-```{r}
-dim(x)
-```
-
-```{r}
-x <- read.csv("UK_foods.csv", row.names=1)
-head(x)
-```
-
-```{r}
-barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
-```
-```{r}
-barplot(as.matrix(x), beside=F, col=rainbow(nrow(x)))
-```
-
-Pairs plot can be helpful for small databases like this one but quickly become untractable with larger datasets with too many points overlapping etc..
-
-
-```{r}
-pairs(x, col=rainbow(10), pch=16)
-```
-
-
-###PCA to the rescue
-
-Let's try PCA on this dataset with the **prcomp()** function
-```{r}
-pca <- prcomp( t(x) )
-summary(pca)
-```
-
-
-
-```{r}
-# Plot PC1 vs PC2
-
-plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
-text(pca$x[,1], pca$x[,2], colnames(x))
-```
-
-```{r}
-mycols<- c("orange","red","blue","darkgreen")
-
-plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
-text(pca$x[,1], pca$x[,2], colnames(x), col=mycols)
-```
-
-
-##Digging 
-
-```{r}
-## Lets focus on PC1 as it accounts for > 90% of variance 
-par(mar=c(10, 3, 0.35, 0))
-barplot( pca$rotation[,1], las=2 )
-```
-
 
 

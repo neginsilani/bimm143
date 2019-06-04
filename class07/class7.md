@@ -13,6 +13,10 @@ source("http://tinyurl.com/rescale-R")
 
 Try out the last day’s rescale() function
 
+``` r
+#rescale2( c(1:10, "string"))
+```
+
 \#Find missing NA values in two vectors
 
 start with a simple example of the larger problem I am trying to solve
@@ -297,6 +301,6 @@ min(x2, na.rm= FALSE)
 
 ``` r
 #code (x2) grade <- function(x2) {
-  #(sum(x2) - min(x2))/7
+ # (sum(x2) - min(x2))/7
 #}
 ```
