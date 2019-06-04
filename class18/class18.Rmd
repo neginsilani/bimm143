@@ -1,0 +1,152 @@
+---
+title: "Class 18"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Exploring the cancer Genome Atlas
+
+Install the packages we need:
+
+```{r}
+BiocManager::install(c("GenomicDataCommons", "TCGAbiolinks", "maftools"))
+```
+
+Load the packages
+
+```{r}
+library(GenomicDataCommons)
+library(TCGAbiolinks)
+library(maftools)
+```
+
+Can we ralk witj the NCI-GDC
+
+```{r}
+GenomicDataCommons::status()
+```
+
+```{r}
+cases_by_project <- cases() %>%
+  facet("project.project_id") %>%
+  aggregations()
+head(cases_by_project)
+```
+
+```{r}
+x <- cases_by_project$project.project_id
+barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+```
+
+```{r}
+# Make a custom color vector for our plot
+colvec <- rep("lightblue", nrow(x))
+colvec[29] <- "red"
+
+# Plot with 'log' for y axis and rotate labels with 'las'
+#par()  
+barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+```
+
+
+```{r}
+query <- GDCquery(project="TCGA-PAAD",
+                  data.category="Transcriptome Profiling",
+                  data.type="Gene Expression Quantification")
+
+ans <- getResults(query)
+```
+
+```{r}
+View(ans)
+```
+
+```{r}
+nrow(ans)
+```
+
+### Section 4
+
+```{r}
+maf.file <- GDCquery_Maf(tumor="PAAD", pipelines = "mutect")
+```
+
+```{r}
+head(maf.file)
+```
+
+
+## Variant analysis with R
+
+```{r}
+vars = read.maf(maf = maf.file, verbose = FALSE)
+```
+
+```{r}
+plotmafSummary(vars)
+```
+
+
+```{r}
+oncoplot(maf = vars, top = 10)
+```
+
+```{r}
+# Oncoplot for our top 10 most frequently mutated genes
+pdf("oncoplot_panc.pdf")
+oncoplot(maf = vars, top = 10, fontSize = 12)
+dev.off()
+```
+
+```{r}
+oncostrip(maf=vars, genes=c("KRAS", "TP53"))
+```
+
+
+# Part II.
+
+## Identify tumor specific 9-mer specific
+
+```{r}
+seqs<- read.fasta("lecture18_sequences.fa")
+seqs
+```
+
+
+```{r}
+ide<- conserv(seqs, method= "identity")
+ide
+```
+
+
+
+```{r}
+miss.match.sites <- which(ide < 1)
+gap.sites <- gap.inspect(seqs)$t.inds
+```
+
+```{r}
+tumor.sites <- miss.match.sites[ !miss.match.sites %in% gap.sites ]
+```
+
+Now get the sequence with all possible 9-mers
+
+```{r}
+start.position <- tumor.sites - 8
+end.positions <- tumor.sites + 8
+```
+
+```{r}
+start.position[1]: end.positions[1]
+```
+
+Get the tumor sequence
+
+```{r}
+seqs$ali[2, start.position[1]: end.positions[1] ]
+```
+
