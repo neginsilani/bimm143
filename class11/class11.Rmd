@@ -111,7 +111,7 @@ pdb$atom$elety[1:2]
 # Which allows us to do the following
 
 ```{r}
-plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab=“B-factor”)
+#plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab=“B-factor”)
 ```
 
 Q7. What type of R object is pdb$atom? HINT: You can always use the str() function to get a
