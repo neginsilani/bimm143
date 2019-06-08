@@ -38,18 +38,18 @@ head(cases_by_project)
 ```
 
 ```{r}
-x <- cases_by_project$project.project_id
-barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+
+###barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
 ```
 
 ```{r}
 # Make a custom color vector for our plot
-colvec <- rep("lightblue", nrow(x))
-colvec[29] <- "red"
+#colvec <- rep("lightblue", nrow(x))
+#colvec[29] <- "red"
 
 # Plot with 'log' for y axis and rotate labels with 'las'
 #par()  
-barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+#barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
 ```
 
 
@@ -112,41 +112,41 @@ oncostrip(maf=vars, genes=c("KRAS", "TP53"))
 ## Identify tumor specific 9-mer specific
 
 ```{r}
-seqs<- read.fasta("lecture18_sequences.fa")
-seqs
+#seqs <-read.fasta("lecture18_sequences.fa")
+#seqs
 ```
 
 
 ```{r}
-ide<- conserv(seqs, method= "identity")
-ide
+#ide<- conserv(seqs, method= "identity")
+#ide
 ```
 
 
 
 ```{r}
-miss.match.sites <- which(ide < 1)
-gap.sites <- gap.inspect(seqs)$t.inds
+#miss.match.sites <- which(ide < 1)
+#gap.sites <- gap.inspect(seqs)$t.inds
 ```
 
 ```{r}
-tumor.sites <- miss.match.sites[ !miss.match.sites %in% gap.sites ]
+#tumor.sites <- miss.match.sites[ !miss.match.sites %in% gap.sites ]
 ```
 
 Now get the sequence with all possible 9-mers
 
 ```{r}
-start.position <- tumor.sites - 8
-end.positions <- tumor.sites + 8
+#start.position <- tumor.sites - 8
+#end.positions <- tumor.sites + 8
 ```
 
 ```{r}
-start.position[1]: end.positions[1]
+#start.position[1]: end.positions[1]
 ```
 
 Get the tumor sequence
 
 ```{r}
-seqs$ali[2, start.position[1]: end.positions[1] ]
+#seqs$ali[2, start.position[1]: end.positions[1] ]
 ```
 
